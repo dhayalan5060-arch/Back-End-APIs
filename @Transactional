@@ -1,0 +1,29 @@
+// Works At service layer.
+It follows ACID Properties
+*Atomicity (All or Nothing)
+*Consistency (Valid State)
+*Isolation (Independent Transaction)
+*Durability(Permanent Save)
+
+@Service
+public class PolicyService {
+
+    @Autowired
+    private PolicyRepository policyRepo;
+
+    @Autowired
+    private PremiumRepository premiumRepo;
+
+    @Transactional
+    public void createPolicy(Policy policy, PremiumDetails premium) {
+
+        policyRepo.save(policy);
+
+        premiumRepo.save(premium);
+
+        // simulate error
+        if (true) {
+            throw new RuntimeException("Something went wrong!");
+        }
+    }
+}
