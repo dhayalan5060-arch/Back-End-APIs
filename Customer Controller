@@ -1,0 +1,31 @@
+package com.insurance.controller;
+
+import com.insurance.dto.RegisterRequestDTO;
+import com.insurance.service.CustomerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/customers")
+@RequiredArgsConstructor
+public class CustomerController {
+
+    private final CustomerService customerService;
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequestDTO request) {
+
+        String response = customerService.registerUser(request);
+        return ResponseEntity.ok(response);
+
+/*
+@PostMapping("/register")
+public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO request) {
+
+    RegisterResponseDTO response = customerService.registerUser(request);
+    return ResponseEntity.ok(response);
+}
+/*
+    }
+}
