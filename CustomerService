@@ -1,0 +1,71 @@
+package com.insurance.service;
+
+import com.insurance.dto.RegisterRequestDTO;
+
+public interface CustomerService {
+
+    String registerUser(RegisterRequestDTO request);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+package com.insurance.service.impl;
+
+import com.insurance.dto.RegisterRequestDTO;
+import com.insurance.entity.Customer;
+import com.insurance.repository.CustomerRepository;
+import com.insurance.service.CustomerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomerServiceImpl implements CustomerService {
+
+    private final CustomerRepository customerRepository;
+
+    @Override
+    public String registerUser(RegisterRequestDTO request) {
+
+        // 1. Password validation
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Passwords do not match");
+        }
+
+        // 2. Check existing user
+        customerRepository.findByUsername(request.getUsername())
+                .ifPresent(user -> {
+                    throw new RuntimeException("Username already exists");
+                });
+
+        customerRepository.findByEmail(request.getEmail())
+                .ifPresent(user -> {
+                    throw new RuntimeException("Email already exists");
+                });
+
+        // 3. Convert DTO -> Entity
+        Customer customer = Customer.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .mobileNumber(request.getMobileNumber())
+                .dob(request.getDob())
+                .email(request.getEmail())
+                .username(request.getUsername())
+                .password(request.getPassword()) // later encode this
+                .build();
+
+        // 4. Save
+        customerRepository.save(customer);
+
+        return "User Registered Successfully";
+    }
+}
